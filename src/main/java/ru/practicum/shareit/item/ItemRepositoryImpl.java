@@ -60,8 +60,8 @@ public class ItemRepositoryImpl implements ItemRepository {
     public List<Item> getItemByText(String text) {
         return itemStorage.entrySet().stream()
                 .filter(item -> item.getValue().getAvailable() == true)
-                .filter(item -> item.getValue().getName().toLowerCase().contains(text.toLowerCase()))
-                .filter(item -> item.getValue().getDescription().toLowerCase().contains(text.toLowerCase()))
+                .filter(item -> item.getValue().getName().toLowerCase().contains(text.toLowerCase()) ||
+                        item.getValue().getDescription().toLowerCase().contains(text.toLowerCase()))
                 .map(item -> item.getValue())
                 .collect(Collectors.toList());
     }
