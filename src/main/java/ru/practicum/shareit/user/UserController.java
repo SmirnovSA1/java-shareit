@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,13 +16,14 @@ import java.util.Map;
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 @Slf4j
+@ResponseBody
 public class UserController {
     private final UserService userService;
 
     @PostMapping
     public User createUser(@Valid @RequestBody User newUser) {
         log.info("Создание пользователя: {}", newUser);
-        return userService.createUser(newUser);
+        return ResponseEntity.ok().body(userService.createUser(newUser)).getBody();
     }
 
     @GetMapping
@@ -33,19 +35,20 @@ public class UserController {
     @GetMapping("/{userId}")
     public User getUserById(@PathVariable(name = "userId") Long userId) {
         log.info("Получение пользователей");
-        return userService.getUserById(userId);
+        return ResponseEntity.ok().body(userService.getUserById(userId)).getBody();
     }
 
     @PatchMapping("/{userId}")
     public User updateUser(@Valid @PathVariable(name = "userId") Long userId,
                            @RequestBody User user) {
         log.info("Обновление пользователя с id: {}", userId);
-        return userService.updateUser(userId, user);
+        return ResponseEntity.ok().body(userService.updateUser(userId, user)).getBody();
     }
 
     @DeleteMapping("/{userId}")
     public Map<String, String> deleteUserById(@PathVariable(name = "userId") Long userId) {
         log.info("Удаление пользователя с id: {}", userId);
-        return userService.deleteUserById(userId);
+        Map<String, String> result = userService.deleteUserById(userId);
+        return ResponseEntity.ok().body(result).getBody();
     }
 }
