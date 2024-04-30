@@ -13,12 +13,6 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ErrorResponse serverException(final Exception e) {
-//        return new ErrorResponse(e.getMessage());
-//    }
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse notAllowedException(final NotAllowedException e) {
@@ -30,16 +24,4 @@ public class ErrorHandler {
     public ErrorResponse alreadyExistException(final AlreadyExistException e) {
         return new ErrorResponse(e.getMessage());
     }
-
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    public ErrorResponse notAllowedException(final Exception e) {
-//        return new ErrorResponse(e.getMessage());
-//    }
-
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.CONFLICT)
-//    public ErrorResponse alreadyExistException(final Exception e) {
-//        return new ErrorResponse(e.getMessage());
-//    }
 }
