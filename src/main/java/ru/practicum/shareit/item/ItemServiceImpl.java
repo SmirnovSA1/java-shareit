@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotAllowedException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,43 +20,53 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserService userService;
+    private final ItemMapper itemMapper;
 
     @Override
-    public Item createItem(Long userId, ItemDto newItemDto) {
+    public ItemDto createItem(Long userId, ItemDto newItemDto) {
         userService.getUserById(userId);
-        return itemRepository.createItem(userId, newItemDto);
+        Item createdItem = itemMapper.toItem(userId, newItemDto);
+        createdItem = itemRepository.createItem(userId, createdItem);
+        return itemMapper.toItemDto(createdItem);
     }
 
     @Override
-    public Item updateItem(Long userId, Long itemId, ItemDto updatedItemDto) {
+    public ItemDto updateItem(Long userId, Long itemId, ItemDto updatedItemDto) {
         userService.getUserById(userId);
         changeIsAllowed(userId, itemId);
-        return itemRepository.updateItem(userId, itemId, updatedItemDto);
+        Item updatedItem = itemRepository.updateItem(userId, itemId, updatedItemDto);
+        return itemMapper.toItemDto(updatedItem);
     }
 
     @Override
-    public Item getItemById(Long userId, Long itemId) {
+    public ItemDto getItemById(Long userId, Long itemId) {
         userService.getUserById(userId);
         Item foundItem = itemRepository.getItemById(itemId);
 
         if (foundItem == null) throw new NotFoundException(String.format("Не найдена вещь c id %d", itemId));
 
-        return foundItem;
+        return itemMapper.toItemDto(foundItem);
     }
 
     @Override
-    public List<Item> getItemsByOwner(Long userId) {
+    public List<ItemDto> getItemsByOwner(Long userId) {
         userService.getUserById(userId);
-        return itemRepository.getItemsByOwner(userId);
+        List<Item> itemsByOwner = itemRepository.getItemsByOwner(userId);
+        return itemsByOwner.stream()
+                .map(item -> itemMapper.toItemDto(item))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Item> getItemByText(Long userId, String text) {
+    public List<ItemDto> getItemByText(Long userId, String text) {
         userService.getUserById(userId);
 
         if (text.trim().isBlank()) return new ArrayList<>();
 
-        return itemRepository.getItemByText(text);
+        List<Item> foundItems = itemRepository.getItemByText(text);
+        return foundItems.stream()
+                .map(item -> itemMapper.toItemDto(item))
+                .collect(Collectors.toList());
     }
 
     private void changeIsAllowed(Long userId, Long itemId) {

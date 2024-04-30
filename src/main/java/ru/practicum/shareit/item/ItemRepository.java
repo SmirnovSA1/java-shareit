@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ItemRepository {
 
-    Item createItem(Long ownerId, ItemDto newItemDto);
+    Item createItem(Long ownerId, Item newItem);
 
     Item updateItem(Long userId, Long itemId, ItemDto updatedItemDto);
 

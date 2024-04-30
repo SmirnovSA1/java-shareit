@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.HashMap;
@@ -20,11 +19,11 @@ public class ItemRepositoryImpl implements ItemRepository {
     private long generatedId = 0L;
 
     @Override
-    public Item createItem(Long userId, ItemDto newItemDto) {
-        Item createdItem = ItemMapper.toItem(userId, newItemDto);
-        createdItem.setId(generateId());
-        itemStorage.put(createdItem.getId(), createdItem);
-        return createdItem;
+    public Item createItem(Long userId, Item newItem) {
+        newItem.setId(generateId());
+        newItem.setOwner(userId);
+        itemStorage.put(newItem.getId(), newItem);
+        return newItem;
     }
 
     @Override
