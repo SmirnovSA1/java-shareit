@@ -1,13 +1,16 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.response.Response;
+import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 /**
  * TODO Sprint add-controllers.
@@ -21,34 +24,38 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public User createUser(@Valid @RequestBody User newUser) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto createUser(@Valid @RequestBody UserDto newUser) {
         log.info("Создание пользователя: {}", newUser);
         return ResponseEntity.ok().body(userService.createUser(newUser)).getBody();
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserDto> getAllUsers() {
         log.info("Получение пользователей");
         return userService.getAllUsers();
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable(name = "userId") Long userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto getUserById(@PathVariable(name = "userId") Long userId) {
         log.info("Получение пользователей");
         return ResponseEntity.ok().body(userService.getUserById(userId)).getBody();
     }
 
     @PatchMapping("/{userId}")
-    public User updateUser(@Valid @PathVariable(name = "userId") Long userId,
-                           @RequestBody User user) {
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto updateUser(@Valid @PathVariable(name = "userId") Long userId,
+                              @RequestBody UserDto user) {
         log.info("Обновление пользователя с id: {}", userId);
         return ResponseEntity.ok().body(userService.updateUser(userId, user)).getBody();
     }
 
     @DeleteMapping("/{userId}")
-    public Map<String, String> deleteUserById(@PathVariable(name = "userId") Long userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Response> deleteUserById(@PathVariable(name = "userId") Long userId) {
         log.info("Удаление пользователя с id: {}", userId);
-        Map<String, String> result = userService.deleteUserById(userId);
-        return ResponseEntity.ok().body(result).getBody();
+        return userService.deleteUserById(userId);
     }
 }

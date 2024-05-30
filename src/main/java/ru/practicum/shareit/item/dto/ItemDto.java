@@ -14,13 +14,13 @@ import javax.validation.constraints.Size;
 @Builder
 public class ItemDto {
     private Long id;
+    @NotNull
     @NotBlank
     private String name;
     @NotNull
+    @NotBlank
     @Size(max = 200)
     private String description;
     @NotNull
     private Boolean available;
-    private Long owner;
-    private Long request;
 }
