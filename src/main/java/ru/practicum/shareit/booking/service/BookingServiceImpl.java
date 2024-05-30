@@ -152,8 +152,6 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllBookingsForUserItemsOrderByStartDesc(owner.getId());
         }
 
-        return bookings.stream().
-                map(bookingMapper::toBookingDtoExtended).
-                collect(Collectors.toList());
+        return bookings.stream().map(bookingMapper::toBookingDtoExtended).collect(Collectors.toList());
     }
 }
