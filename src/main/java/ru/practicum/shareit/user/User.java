@@ -9,7 +9,10 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "users")
-@Getter @Setter @ToString @EqualsAndHashCode
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

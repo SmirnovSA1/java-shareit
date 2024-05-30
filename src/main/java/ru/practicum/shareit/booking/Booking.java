@@ -10,7 +10,10 @@ import java.time.LocalDateTime;
 /**
  * TODO Sprint add-bookings.
  */
-@Getter @Setter @ToString @EqualsAndHashCode
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

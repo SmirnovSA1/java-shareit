@@ -102,8 +102,7 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case CURRENT:
-                bookings = bookingRepository.
-                        findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(bookerId, now, now);
+                bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(bookerId, now, now);
                 break;
             case PAST:
                 bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(bookerId, now);
@@ -135,25 +134,19 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case CURRENT:
-                bookings = bookingRepository.
-                        findAllBookingsForUserItemsWhereStartBeforeAndEndAfterOrderByStartDesc(
-                                owner.getId(), now, now);
+                bookings = bookingRepository.findAllBookingsForUserItemsWhereStartBeforeAndEndAfterOrderByStartDesc(owner.getId(), now, now);
                 break;
             case PAST:
-                bookings = bookingRepository.
-                        findAllBookingsForUserItemsWhereEndBeforeOrderByStartDesc(owner.getId(), now);
+                bookings = bookingRepository.findAllBookingsForUserItemsWhereEndBeforeOrderByStartDesc(owner.getId(), now);
                 break;
             case FUTURE:
-                bookings = bookingRepository.
-                        findAllBookingsForUserItemsWhereStartAfterOrderByStartDesc(owner.getId(), now);
+                bookings = bookingRepository.findAllBookingsForUserItemsWhereStartAfterOrderByStartDesc(owner.getId(), now);
                 break;
             case WAITING:
-                bookings = bookingRepository.
-                        findAllBookingsForUserItemsByStatusOrderByStartDesc(owner.getId(), BookingStatus.WAITING);
+                bookings = bookingRepository.findAllBookingsForUserItemsByStatusOrderByStartDesc(owner.getId(), BookingStatus.WAITING);
                 break;
             case REJECTED:
-                bookings = bookingRepository.
-                        findAllBookingsForUserItemsByStatusOrderByStartDesc(owner.getId(), BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllBookingsForUserItemsByStatusOrderByStartDesc(owner.getId(), BookingStatus.REJECTED);
                 break;
             default:
                 bookings = bookingRepository.findAllBookingsForUserItemsOrderByStartDesc(owner.getId());

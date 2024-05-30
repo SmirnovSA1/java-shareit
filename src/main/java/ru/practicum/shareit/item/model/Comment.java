@@ -5,7 +5,10 @@ import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 
-@Getter @Setter @ToString @EqualsAndHashCode
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
