@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoExtended;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.*;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
@@ -32,6 +33,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final ItemRepository itemRepository;
+    private final ItemMapper itemMapper;
 
     @Transactional
     @Override
@@ -60,13 +62,17 @@ public class BookingServiceImpl implements BookingService {
         if (!bookingFromDto.getItem().getAvailable()) throw new BadRequestException("Вещь сейчас недоступна");
 
         Booking booking = bookingRepository.save(bookingFromDto);
-        return bookingMapper.toBookingDtoExtended(booking);
+        BookingDtoExtended result = bookingMapper.toBookingDtoExtended(booking);
+        result.setItem(itemMapper.toItemDto(booking.getItem()));
+        result.setBooker(userMapper.toUserDto(booking.getBooker()));
+        return result;
     }
 
     @Transactional
     @Override
-    public BookingDtoExtended confirmOrRejectBooing(Long userId, Long bookingId, Boolean approved) {
-        Booking foundBooking = bookingMapper.toBookingFromExtended(getBookingById(userId, bookingId));
+    public BookingDtoExtended confirmOrRejectBooking(Long userId, Long bookingId, Boolean approved) {
+        Booking foundBooking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));;
 
         if (!foundBooking.getItem().getOwner().getId().equals(userId)) {
             throw new WrongItemOwnerException(
@@ -79,7 +85,11 @@ public class BookingServiceImpl implements BookingService {
 
         foundBooking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
 
-        return bookingMapper.toBookingDtoExtended(bookingRepository.save(foundBooking));
+        Booking savedBooking = bookingRepository.save(foundBooking);
+        BookingDtoExtended result = bookingMapper.toBookingDtoExtended(foundBooking);
+        result.setItem(itemMapper.toItemDto(savedBooking.getItem()));
+        result.setBooker(userMapper.toUserDto(savedBooking.getBooker()));
+        return result;
     }
 
     @Override
@@ -92,17 +102,20 @@ public class BookingServiceImpl implements BookingService {
                     String.format("Пользователь с id %d не является владельцем или инициатором бронирования", userId));
         }
 
-        return bookingMapper.toBookingDtoExtended(foundBooking);
+        BookingDtoExtended result = bookingMapper.toBookingDtoExtended(foundBooking);
+        result.setItem(itemMapper.toItemDto(foundBooking.getItem()));
+        result.setBooker(userMapper.toUserDto(foundBooking.getBooker()));
+        return result;
     }
 
     @Override
-    public List<BookingDtoExtended> getUserBookings(Long bookerId, String stringState) {
-        BookingState state;
+    public List<BookingDtoExtended> getUserBookings(Long bookerId, String state) {
+        BookingState stateEnum;
 
         try {
-            state = BookingState.valueOf(stringState);
+            stateEnum = BookingState.valueOf(state);
         } catch (IllegalArgumentException e) {
-            throw new UnknownStateException(String.format("Неизвестное состояние: %s", stringState));
+            throw new UnknownStateException(String.format("Неизвестное состояние: %s", state));
         }
 
         userService.getUserById(bookerId);
@@ -110,7 +123,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
 
-        switch (state) {
+        switch (stateEnum) {
             case CURRENT:
                 bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(bookerId, now, now);
                 break;
@@ -130,19 +143,22 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
         }
 
-        return bookings.stream()
-                .map(bookingMapper::toBookingDtoExtended)
-                .collect(Collectors.toList());
+        return bookings.stream().map(booking -> {
+                    BookingDtoExtended dto = bookingMapper.toBookingDtoExtended(booking);
+                    dto.setItem(itemMapper.toItemDto(booking.getItem()));
+                    dto.setBooker(userMapper.toUserDto(booking.getBooker()));
+                    return dto;
+                }).collect(Collectors.toList());
     }
 
     @Override
-    public List<BookingDtoExtended> getByItemOwnerBookings(Long userId, String stringState) {
-        BookingState state;
+    public List<BookingDtoExtended> getByItemOwnerBookings(Long userId, String state) {
+        BookingState stateEnum;
 
         try {
-            state = BookingState.valueOf(stringState);
+            stateEnum = BookingState.valueOf(state);
         } catch (IllegalArgumentException e) {
-            throw new UnknownStateException(String.format("Неизвестное состояние: %s", stringState));
+            throw new UnknownStateException(String.format("Неизвестное состояние: %s", state));
         }
 
         User owner = userMapper.toUser(userService.getUserById(userId));
@@ -150,7 +166,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
 
-        switch (state) {
+        switch (stateEnum) {
             case CURRENT:
                 bookings = bookingRepository.findAllBookingsForUserItemsWhereStartBeforeAndEndAfterOrderByStartDesc(owner.getId(), now, now);
                 break;
@@ -170,6 +186,11 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllBookingsForUserItemsOrderByStartDesc(owner.getId());
         }
 
-        return bookings.stream().map(bookingMapper::toBookingDtoExtended).collect(Collectors.toList());
+        return bookings.stream().map(booking -> {
+            BookingDtoExtended dto = bookingMapper.toBookingDtoExtended(booking);
+            dto.setItem(itemMapper.toItemDto(booking.getItem()));
+            dto.setBooker(userMapper.toUserDto(booking.getBooker()));
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

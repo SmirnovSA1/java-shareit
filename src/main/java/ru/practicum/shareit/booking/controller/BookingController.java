@@ -34,7 +34,7 @@ public class BookingController {
                                             @PathVariable(name = "bookingId") Long bookingId,
                                             @RequestParam(name = "approved", required = true) Boolean approved) {
         log.info("Попытка подтверждения бронирования");
-        return bookingService.confirmOrRejectBooing(userId, bookingId, approved);
+        return bookingService.confirmOrRejectBooking(userId, bookingId, approved);
     }
 
     @GetMapping("/{bookingId}")
@@ -48,16 +48,16 @@ public class BookingController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDtoExtended> getUserBookings(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
-                                                    @RequestParam(defaultValue = "ALL") String stringState) {
+                                                    @RequestParam(defaultValue = "ALL") String state) {
         log.info("Получение бронирований пользователя");
-        return bookingService.getUserBookings(userId, stringState);
+        return bookingService.getUserBookings(userId, state);
     }
 
     @GetMapping("/owner")
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDtoExtended> getByItemOwnerBookings(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
-                                                           @RequestParam(defaultValue = "ALL") String stringState) {
+                                                           @RequestParam(defaultValue = "ALL") String state) {
         log.info("Получение бронирований владельца вещи");
-        return bookingService.getByItemOwnerBookings(userId, stringState);
+        return bookingService.getByItemOwnerBookings(userId, state);
     }
 }

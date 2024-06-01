@@ -10,11 +10,11 @@ public interface BookingService {
 
     BookingDtoExtended createBooking(Long userId, BookingDto bookingDto);
 
-    BookingDtoExtended confirmOrRejectBooing(Long userId, Long bookingId, Boolean approved);
+    BookingDtoExtended confirmOrRejectBooking(Long userId, Long bookingId, Boolean approved);
 
     BookingDtoExtended getBookingById(Long userId, Long bookingId);
 
-    List<BookingDtoExtended> getUserBookings(Long userId, String stringState);
+    List<BookingDtoExtended> getUserBookings(Long userId, String state);
 
-    List<BookingDtoExtended> getByItemOwnerBookings(Long userId, String stringState);
+    List<BookingDtoExtended> getByItemOwnerBookings(Long userId, String state);
 }

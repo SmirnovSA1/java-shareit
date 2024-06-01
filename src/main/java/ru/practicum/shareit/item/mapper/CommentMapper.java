@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.model.Comment;
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
 
+    @Mapping(target = "item", ignore = true)
+    @Mapping(target = "author", ignore = true)
     Comment toComment(CommentDto commentDto);
 
     @Mapping(target = "authorName", source = "comment.author.name")

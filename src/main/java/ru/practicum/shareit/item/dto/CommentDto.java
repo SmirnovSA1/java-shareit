@@ -2,8 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.NotBlank;
 
@@ -13,6 +12,6 @@ public class CommentDto {
     private Long id;
     @NotBlank
     private String text;
-    private Item item;
-    private User author;
+    private ItemDto item;
+    private UserDto author;
 }

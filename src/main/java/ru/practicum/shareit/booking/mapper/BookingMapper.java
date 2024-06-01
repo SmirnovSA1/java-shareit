@@ -14,8 +14,8 @@ public interface BookingMapper {
     @Mapping(target = "item", ignore = true)
     Booking toBooking(BookingDto bookingDto);
 
-    Booking toBookingFromExtended(BookingDtoExtended bookingDtoExt);
-
+    @Mapping(target = "item", ignore = true)
+    @Mapping(target = "booker", ignore = true)
     BookingDtoExtended toBookingDtoExtended(Booking booking);
 
     @Mapping(target = "itemId", source = "booking.item.id")
