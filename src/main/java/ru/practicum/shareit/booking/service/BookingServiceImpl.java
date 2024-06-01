@@ -22,8 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.booking.BookingState.CURRENT;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
