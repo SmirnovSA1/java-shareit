@@ -21,6 +21,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.shareit.booking.BookingState.CURRENT;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -94,7 +96,15 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoExtended> getUserBookings(Long bookerId, BookingState state) {
+    public List<BookingDtoExtended> getUserBookings(Long bookerId, String stringState) {
+        BookingState state;
+
+        try {
+            state = BookingState.valueOf(stringState);
+        } catch (IllegalArgumentException e) {
+            throw new UnknownStateException(String.format("Неизвестное состояние: %s", stringState));
+        }
+
         userService.getUserById(bookerId);
 
         List<Booking> bookings;
@@ -126,7 +136,15 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoExtended> getByItemOwnerBookings(Long userId, BookingState state) {
+    public List<BookingDtoExtended> getByItemOwnerBookings(Long userId, String stringState) {
+        BookingState state;
+
+        try {
+            state = BookingState.valueOf(stringState);
+        } catch (IllegalArgumentException e) {
+            throw new UnknownStateException(String.format("Неизвестное состояние: %s", stringState));
+        }
+
         User owner = userMapper.toUser(userService.getUserById(userId));
 
         List<Booking> bookings;

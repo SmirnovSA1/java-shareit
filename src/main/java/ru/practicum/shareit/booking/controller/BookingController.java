@@ -13,9 +13,6 @@ import ru.practicum.shareit.exceptions.UnknownStateException;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-bookings.
- */
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
@@ -51,26 +48,16 @@ public class BookingController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDtoExtended> getUserBookings(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
-                                                    @RequestParam(defaultValue = "ALL") String state) {
+                                                    @RequestParam(defaultValue = "ALL") String stringState) {
         log.info("Получение бронирований пользователя");
-
-        try {
-            return bookingService.getUserBookings(userId, BookingState.valueOf(state));
-        } catch (IllegalArgumentException e) {
-            throw new UnknownStateException(String.format("Неизвестное состояние: %s", state));
-        }
+        return bookingService.getUserBookings(userId, stringState);
     }
 
     @GetMapping("/owner")
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDtoExtended> getByItemOwnerBookings(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
-                                                           @RequestParam(defaultValue = "ALL") String state) {
+                                                           @RequestParam(defaultValue = "ALL") String stringState) {
         log.info("Получение бронирований владельца вещи");
-
-        try {
-            return bookingService.getByItemOwnerBookings(userId, BookingState.valueOf(state));
-        } catch (IllegalArgumentException e) {
-            throw new UnknownStateException(String.format("Неизвестное состояние: %s", state));
-        }
+        return bookingService.getByItemOwnerBookings(userId, stringState);
     }
 }
