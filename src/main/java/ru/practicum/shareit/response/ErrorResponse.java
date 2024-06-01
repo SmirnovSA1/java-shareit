@@ -1,4 +1,4 @@
-package ru.practicum.shareit.exceptions;
+package ru.practicum.shareit.response;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,4 +7,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ErrorResponse {
     private final String error;
+    private final String message;
 }
