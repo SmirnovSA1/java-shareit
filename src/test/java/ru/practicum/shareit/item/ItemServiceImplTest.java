@@ -38,7 +38,7 @@ class ItemServiceImplTest {
     @Mock
     private ItemRepository itemRepository;
     @Mock
-    private ItemMapper itemMapper;;
+    private ItemMapper itemMapper;
     @Mock
     private UserService userService;
     @Mock
@@ -48,7 +48,7 @@ class ItemServiceImplTest {
     @Mock
     private CommentRepository commentRepository;
     @Mock
-    private CommentMapper commentMapper;;
+    private CommentMapper commentMapper;
     @Mock
     private ItemRequestService itemRequestService;
     @InjectMocks
