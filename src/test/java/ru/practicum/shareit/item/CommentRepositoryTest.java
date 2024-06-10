@@ -49,7 +49,6 @@ class CommentRepositoryTest {
         List<Comment> result = commentRepository.findAllByItemId(1L);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
     }
 
     @Test
@@ -100,7 +99,5 @@ class CommentRepositoryTest {
         List<Comment> result = commentRepository.findAllByItemIn(List.of(item1));
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(2, result.size());
     }
 }

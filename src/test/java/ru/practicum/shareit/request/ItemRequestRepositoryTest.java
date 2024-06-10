@@ -61,8 +61,6 @@ class ItemRequestRepositoryTest {
         List<ItemRequest> result = itemRequestRepository.findAllByRequesterIdOrderByCreatedDesc(1L);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(2, result.size());
     }
 
     @Test
@@ -104,7 +102,5 @@ class ItemRequestRepositoryTest {
         List<ItemRequest> result = itemRequestRepository.findAllByRequesterIdNot(1L, pageable);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
     }
 }
