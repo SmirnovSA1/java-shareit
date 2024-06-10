@@ -29,7 +29,7 @@ public class UserServiceIntegrationTest {
         UserDto savedUser = userService.createUser(userDto);
 
         assertNotNull(savedUser.getId());
-        assertEquals(1L, savedUser.getId());
+        assertEquals(userDto.getId(), savedUser.getId());
         assertEquals(userDto.getName(), savedUser.getName());
         assertEquals(userDto.getEmail(), savedUser.getEmail());
 
