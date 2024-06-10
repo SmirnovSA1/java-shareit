@@ -24,12 +24,11 @@ public class UserServiceIntegrationTest {
 
     @Test
     void saveUser() {
-        UserDto userDto = UserDto.builder().id(1L).name("Test").email("testEmail@test.com").build();
+        UserDto userDto = UserDto.builder().name("Test").email("testEmail@test.com").build();
 
         UserDto savedUser = userService.createUser(userDto);
 
         assertNotNull(savedUser.getId());
-        assertEquals(userDto.getId(), savedUser.getId());
         assertEquals(userDto.getName(), savedUser.getName());
         assertEquals(userDto.getEmail(), savedUser.getEmail());
 
