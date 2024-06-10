@@ -14,7 +14,6 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(userMapper::toUserDto)
-                .collect(Collectors.toList());
+        return userMapper.toUserDtoList(userRepository.findAll());
     }
 
     @Override

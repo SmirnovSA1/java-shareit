@@ -28,7 +28,7 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
-    public BookingDtoExtended confirmOrRejectBooing(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
+    public BookingDtoExtended confirmOrRejectBooking(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
                                             @PathVariable(name = "bookingId") Long bookingId,
                                             @RequestParam(name = "approved", required = true) Boolean approved) {
         log.info("Попытка подтверждения бронирования");
@@ -46,16 +46,20 @@ public class BookingController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDtoExtended> getUserBookings(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
-                                                    @RequestParam(defaultValue = "ALL") String state) {
+                                                    @RequestParam(defaultValue = "ALL") String state,
+                                                    @RequestParam(defaultValue = "0") Integer from,
+                                                    @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получение бронирований пользователя");
-        return bookingService.getUserBookings(userId, state);
+        return bookingService.getUserBookings(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDtoExtended> getByItemOwnerBookings(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
-                                                           @RequestParam(defaultValue = "ALL") String state) {
+                                                           @RequestParam(defaultValue = "ALL") String state,
+                                                           @RequestParam(defaultValue = "0") Integer from,
+                                                           @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получение бронирований владельца вещи");
-        return bookingService.getByItemOwnerBookings(userId, state);
+        return bookingService.getByItemOwnerBookings(userId, state, from, size);
     }
 }

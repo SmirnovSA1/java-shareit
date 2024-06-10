@@ -7,6 +7,8 @@ import ru.practicum.shareit.item.dto.ItemDtoInfo;
 import ru.practicum.shareit.item.dto.ItemUpdatedDto;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
 
@@ -19,4 +21,8 @@ public interface ItemMapper {
     Item toItemFromUpdatedDto(ItemUpdatedDto item);
 
     ItemDtoInfo toItemDtoInfo(Item item);
+
+    List<ItemDto> toListItemDto(List<Item> items);
+
+    List<ItemDtoInfo> toListItemDtoInfo(List<Item> items);
 }

@@ -6,6 +6,8 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentDtoResponse;
 import ru.practicum.shareit.item.model.Comment;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
 
@@ -16,4 +18,6 @@ public interface CommentMapper {
     @Mapping(target = "authorName", source = "comment.author.name")
     @Mapping(target = "created", expression = "java(java.time.LocalDateTime.now())")
     CommentDtoResponse toCommentDtoResponse(Comment comment);
+
+    List<CommentDtoResponse> toListCommentDtoResponse(List<Comment> comments);
 }
