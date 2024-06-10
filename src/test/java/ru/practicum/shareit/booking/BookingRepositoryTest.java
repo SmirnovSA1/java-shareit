@@ -63,7 +63,6 @@ class BookingRepositoryTest {
 
         List<Booking> result = bookingRepository.findAllByBookerId(1L, pageable);
         assertNotNull(result);
-        assertFalse(result.isEmpty());
         assertEquals(2, result.size());
     }
 
@@ -109,7 +108,6 @@ class BookingRepositoryTest {
         List<Booking> result = bookingRepository
                 .findAllByBookerIdAndStartBeforeAndEndAfter(1L, start, end, pageable);
         assertNotNull(result);
-        assertFalse(result.isEmpty());
         assertEquals(1, result.size());
     }
 
@@ -153,7 +151,6 @@ class BookingRepositoryTest {
 
         List<Booking> result = bookingRepository.findAllByBookerIdAndEndBefore(1L, start, pageable);
         assertNotNull(result);
-        assertFalse(result.isEmpty());
         assertEquals(1, result.size());
     }
 
@@ -197,7 +194,6 @@ class BookingRepositoryTest {
 
         List<Booking> result = bookingRepository.findAllByBookerIdAndStartAfter(1L, start, pageable);
         assertNotNull(result);
-        assertFalse(result.isEmpty());
         assertEquals(1, result.size());
     }
 
@@ -239,7 +235,6 @@ class BookingRepositoryTest {
 
         List<Booking> result = bookingRepository.findAllByBookerIdAndStatus(1L, BookingStatus.WAITING, pageable);
         assertNotNull(result);
-        assertFalse(result.isEmpty());
         assertEquals(1, result.size());
     }
 
@@ -281,7 +276,6 @@ class BookingRepositoryTest {
 
         List<Booking> result = bookingRepository.findAllBookingsByItem_OwnerId(1L, pageable);
         assertNotNull(result);
-        assertFalse(result.isEmpty());
         assertEquals(2, result.size());
     }
 }
