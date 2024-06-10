@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.response.Response;
 import ru.practicum.shareit.user.controller.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -40,8 +42,9 @@ public class UserControllerTest {
         userDto = createUserResponseDto();
     }
 
+    @SneakyThrows
     @Test
-    void createUser() throws Exception {
+    void createUser() {
         when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
 
         mockMvc.perform(post("/users")
@@ -52,8 +55,9 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email").value("user@test.com"));
     }
 
+    @SneakyThrows
     @Test
-    void createUser_ThrowsMethodArgumentNotValidException() throws Exception {
+    void createUser_ThrowsMethodArgumentNotValidException() {
         UserDto userDtoInvalidEmail = UserDto.builder()
                 .name("User")
                 .email("testEmail")
@@ -65,8 +69,9 @@ public class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @SneakyThrows
     @Test
-    void getAllUsers() throws Exception {
+    void getAllUsers() {
         UserDto userDto2 = createUserResponseDto();
         userDto2.setName("User 2");
         userDto2.setEmail("user2@test.com");
@@ -83,8 +88,32 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[1].email").value("user2@test.com"));
     }
 
+    @SneakyThrows
     @Test
-    void updateUser() throws Exception {
+    void getUserById() {
+        when(userService.getUserById(any(Long.class))).thenReturn(userDto);
+
+        mockMvc.perform(get("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userDto.getId()))
+                .andExpect(jsonPath("$.name").value("User"))
+                .andExpect(jsonPath("$.email").value("user@test.com"));
+    }
+
+    @SneakyThrows
+    @Test
+    void getUserByIdInvalid() {
+        when(userService.getUserById(any(Long.class))).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/users/52")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @SneakyThrows
+    @Test
+    void updateUser() {
         when(userService.updateUser(any(Long.class), any(UserDto.class))).thenReturn(userDto);
 
         mockMvc.perform(patch("/users/" + userDto.getId())
@@ -95,8 +124,9 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email").value("user@test.com"));
     }
 
+    @SneakyThrows
     @Test
-    void deleteUser() throws Exception {
+    void deleteUser() {
         ResponseEntity<Response> response = new ResponseEntity<>(
                 new Response("Успех", "Пользователь с id 1 удален"), HttpStatus.OK);
 
