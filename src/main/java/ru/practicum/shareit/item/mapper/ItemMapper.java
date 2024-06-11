@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
 
+    @Mapping(target = "requestId", source = "item.request.id")
     ItemDto toItemDto(Item item);
 
     @Mapping(target = "owner", ignore = true)
@@ -20,6 +21,7 @@ public interface ItemMapper {
     @Mapping(target = "owner", ignore = true)
     Item toItemFromUpdatedDto(ItemUpdatedDto item);
 
+    @Mapping(target = "requestId", source = "item.request.id")
     ItemDtoInfo toItemDtoInfo(Item item);
 
     List<ItemDto> toListItemDto(List<Item> items);

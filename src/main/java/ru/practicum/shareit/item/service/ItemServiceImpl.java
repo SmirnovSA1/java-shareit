@@ -18,6 +18,8 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.mapper.ItemRequestMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -40,18 +42,20 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ItemRequestService itemRequestService;
+    private final ItemRequestMapper itemRequestMapper;
 
     @Transactional
     @Override
     public ItemDto createItem(Long userId, ItemDto newItemDto) {
         User foundUser = userMapper.toUser(userService.getUserById(userId));
-
-        if (newItemDto.getRequestId() != null) {
-            itemRequestService.getItemRequestById(foundUser.getId(), newItemDto.getRequestId());
-        }
-
         Item itemFromDto = itemMapper.toItem(newItemDto);
         itemFromDto.setOwner(foundUser);
+
+        if (newItemDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestMapper.toItemRequestFromDtoResponse(
+                    itemRequestService.getItemRequestById(foundUser.getId(), newItemDto.getRequestId()));
+            itemFromDto.setRequest(itemRequest);
+        }
 
         return itemMapper.toItemDto(itemRepository.save(itemFromDto));
     }

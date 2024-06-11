@@ -20,6 +20,8 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
+import ru.practicum.shareit.request.mapper.ItemRequestMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -51,6 +53,8 @@ class ItemServiceImplTest {
     private CommentMapper commentMapper;
     @Mock
     private ItemRequestService itemRequestService;
+    @Mock
+    private ItemRequestMapper itemRequestMapper;
     @InjectMocks
     private ItemServiceImpl itemService;
     private UserDto userDto;
@@ -74,6 +78,7 @@ class ItemServiceImplTest {
     private LocalDateTime end1;
     private LocalDateTime start2;
     private LocalDateTime end2;
+    private ItemRequest itemRequest;
 
     @BeforeEach
     void setUp() {
@@ -82,13 +87,18 @@ class ItemServiceImplTest {
         end1 = LocalDateTime.now().minusHours(1);
         start2 = LocalDateTime.now().plusHours(1);
         end2 = LocalDateTime.now().plusHours(2);
+        itemRequest = ItemRequest.builder()
+                .id(1L)
+                .description("description")
+                .created(LocalDateTime.now())
+                .build();
 
         item = Item.builder()
                 .id(1L)
                 .name("item")
                 .description("описание")
                 .available(true)
-                .requestId(1L)
+                .request(itemRequest)
                 .build();
     }
 
@@ -103,6 +113,7 @@ class ItemServiceImplTest {
         when(userService.getUserById(any(Long.class))).thenReturn(userDto);
         when(userMapper.toUser(any(UserDto.class))).thenReturn(user);
         when(itemRequestService.getItemRequestById(user.getId(), itemDto.getId())).thenReturn(itemRequestDtoResponse);
+        when(itemRequestMapper.toItemRequestFromDtoResponse(any(ItemRequestDtoResponse.class))).thenReturn(itemRequest);
         when(itemMapper.toItem(any(ItemDto.class))).thenReturn(item);
         when(itemRepository.save(any(Item.class))).thenReturn(item);
         when(itemMapper.toItemDto(any(Item.class))).thenReturn(itemDto);
@@ -282,7 +293,11 @@ class ItemServiceImplTest {
                 .description("Описание 2")
                 .available(true)
                 .owner(user)
-                .requestId(2L)
+                .request(ItemRequest.builder()
+                        .id(2L)
+                        .description("description 2")
+                        .created(LocalDateTime.now())
+                        .build())
                 .build();
         List<Item> items = List.of(item, item2);
 
@@ -311,7 +326,11 @@ class ItemServiceImplTest {
                 .description("Описание 2")
                 .available(true)
                 .owner(user)
-                .requestId(2L)
+                .request(ItemRequest.builder()
+                        .id(2L)
+                        .description("description 2")
+                        .created(LocalDateTime.now())
+                        .build())
                 .build();
         List<Item> items = List.of(item, item2);
 

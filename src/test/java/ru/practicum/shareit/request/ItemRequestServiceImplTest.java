@@ -87,7 +87,7 @@ class ItemRequestServiceImplTest {
                 .description("описание вещи")
                 .available(true)
                 .owner(requester)
-                .requestId(1L)
+                .request(itemRequest)
                 .build();
         itemDto = ItemDto.builder()
                 .id(1L)

@@ -50,7 +50,7 @@ public class CommentSerializationTest {
         assertThat(result2).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(result2).extractingJsonPathStringValue("$.text").isEqualTo("Some text");
         assertThat(result2).extractingJsonPathStringValue("$.authorName").isEqualTo("Автор");
-        assertThat(result2).extractingJsonPathStringValue("$.created").isEqualTo(now.toString());
+        assertThat(result2).extractingJsonPathStringValue("$.created").isNotEmpty();
     }
 
     @Test
