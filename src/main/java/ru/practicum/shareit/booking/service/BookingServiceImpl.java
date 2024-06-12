@@ -1,6 +1,9 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
@@ -84,7 +87,7 @@ public class BookingServiceImpl implements BookingService {
         foundBooking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
 
         Booking savedBooking = bookingRepository.save(foundBooking);
-        BookingDtoExtended result = bookingMapper.toBookingDtoExtended(foundBooking);
+        BookingDtoExtended result = bookingMapper.toBookingDtoExtended(savedBooking);
         result.setItem(itemMapper.toItemDto(savedBooking.getItem()));
         result.setBooker(userMapper.toUserDto(savedBooking.getBooker()));
         return result;
@@ -107,7 +110,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoExtended> getUserBookings(Long bookerId, String state) {
+    public List<BookingDtoExtended> getUserBookings(Long bookerId, String state, Integer from, Integer size) {
         BookingState stateEnum;
 
         try {
@@ -116,6 +119,15 @@ public class BookingServiceImpl implements BookingService {
             throw new UnknownStateException(String.format("Неизвестное состояние: %s", state));
         }
 
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("Неверно указаны параметры запроса. \n " +
+                    "'from' должен быть больше или равен 0, 'size' должен быть больше 0");
+        }
+
+        int pageNumber = from / size;
+
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.by("start").descending());
+
         userService.getUserById(bookerId);
 
         List<Booking> bookings;
@@ -123,22 +135,22 @@ public class BookingServiceImpl implements BookingService {
 
         switch (stateEnum) {
             case CURRENT:
-                bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(bookerId, now, now);
+                bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(bookerId, now, now, pageable);
                 break;
             case PAST:
-                bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(bookerId, now);
+                bookings = bookingRepository.findAllByBookerIdAndEndBefore(bookerId, now, pageable);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(bookerId, now);
+                bookings = bookingRepository.findAllByBookerIdAndStartAfter(bookerId, now, pageable);
                 break;
             case WAITING:
-                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(bookerId, BookingStatus.WAITING);
+                bookings = bookingRepository.findAllByBookerIdAndStatus(bookerId, BookingStatus.WAITING, pageable);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(bookerId, BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllByBookerIdAndStatus(bookerId, BookingStatus.REJECTED, pageable);
                 break;
             default:
-                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
+                bookings = bookingRepository.findAllByBookerId(bookerId, pageable);
         }
 
         return bookings.stream().map(booking -> {
@@ -150,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoExtended> getByItemOwnerBookings(Long userId, String state) {
+    public List<BookingDtoExtended> getByItemOwnerBookings(Long userId, String state, Integer from, Integer size) {
         BookingState stateEnum;
 
         try {
@@ -159,6 +171,15 @@ public class BookingServiceImpl implements BookingService {
             throw new UnknownStateException(String.format("Неизвестное состояние: %s", state));
         }
 
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("Неверно указаны параметры запроса. \n " +
+                    "'from' должен быть больше или равен 0, 'size' должен быть больше 0");
+        }
+
+        int pageNumber = from / size;
+
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.by("start").descending());
+
         User owner = userMapper.toUser(userService.getUserById(userId));
 
         List<Booking> bookings;
@@ -166,22 +187,22 @@ public class BookingServiceImpl implements BookingService {
 
         switch (stateEnum) {
             case CURRENT:
-                bookings = bookingRepository.findAllBookingsForUserItemsWhereStartBeforeAndEndAfterOrderByStartDesc(owner.getId(), now, now);
+                bookings = bookingRepository.findAllBookingsByItem_OwnerIdAndStartBeforeAndEndAfter(owner.getId(), now, now, pageable);
                 break;
             case PAST:
-                bookings = bookingRepository.findAllBookingsForUserItemsWhereEndBeforeOrderByStartDesc(owner.getId(), now);
+                bookings = bookingRepository.findAllBookingsByItem_OwnerIdAndEndBefore(owner.getId(), now, pageable);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllBookingsForUserItemsWhereStartAfterOrderByStartDesc(owner.getId(), now);
+                bookings = bookingRepository.findAllBookingsByItem_OwnerIdAndStartAfter(owner.getId(), now, pageable);
                 break;
             case WAITING:
-                bookings = bookingRepository.findAllBookingsForUserItemsByStatusOrderByStartDesc(owner.getId(), BookingStatus.WAITING);
+                bookings = bookingRepository.findAllBookingsByItem_OwnerIdAndStatus(owner.getId(), BookingStatus.WAITING, pageable);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllBookingsForUserItemsByStatusOrderByStartDesc(owner.getId(), BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllBookingsByItem_OwnerIdAndStatus(owner.getId(), BookingStatus.REJECTED, pageable);
                 break;
             default:
-                bookings = bookingRepository.findAllBookingsForUserItemsOrderByStartDesc(owner.getId());
+                bookings = bookingRepository.findAllBookingsByItem_OwnerId(owner.getId(), pageable);
         }
 
         return bookings.stream().map(booking -> {

@@ -11,9 +11,6 @@ import ru.practicum.shareit.item.service.ItemService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -48,17 +45,21 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDtoInfo> getItemsByOwner(@RequestHeader(name = "X-Sharer-User-Id") Long userId) {
+    public List<ItemDtoInfo> getItemsByOwner(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
+                                             @RequestParam(defaultValue = "0") Integer from,
+                                             @RequestParam(defaultValue = "10") Integer size) {
         log.info("Полвучение вещей пользователя с id: {}", userId);
-        return ResponseEntity.ok().body(itemService.getItemsByOwner(userId)).getBody();
+        return ResponseEntity.ok().body(itemService.getItemsByOwner(userId, from, size)).getBody();
     }
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     public List<ItemDtoInfo> getItemByText(@RequestHeader(name = "X-Sharer-User-Id") Long userId,
-                                  @RequestParam(name = "text") String text) {
+                                           @RequestParam(name = "text") String text,
+                                           @RequestParam(defaultValue = "0") Integer from,
+                                           @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получение пользователем {} вещи по наименованию: {}", userId, text);
-        return ResponseEntity.ok().body(itemService.getItemByText(userId, text)).getBody();
+        return ResponseEntity.ok().body(itemService.getItemByText(userId, text, from, size)).getBody();
     }
 
     @PostMapping("/{itemId}/comment")

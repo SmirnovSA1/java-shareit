@@ -1,13 +1,11 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Getter
 @Setter
 @ToString
@@ -30,4 +28,7 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private ItemRequest request;
 }
